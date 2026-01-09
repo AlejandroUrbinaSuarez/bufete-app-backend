@@ -14,6 +14,7 @@ const caseRoutes = require('./caseRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
 const settingsRoutes = require('./settingsRoutes');
 const chatRoutes = require('./chatRoutes');
+const statsRoutes = require('./statsRoutes');
 
 // ===========================================
 // RUTAS PÚBLICAS
@@ -61,6 +62,9 @@ router.use('/settings', settingsRoutes);
 
 // Chat en vivo
 router.use('/chat', chatRoutes);
+
+// Estadísticas (admin/abogado)
+router.use('/stats', statsRoutes);
 
 // ===========================================
 // INFO DE LA API
