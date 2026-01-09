@@ -13,6 +13,7 @@ const appointmentRoutes = require('./appointmentRoutes');
 const caseRoutes = require('./caseRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
 const settingsRoutes = require('./settingsRoutes');
+const chatRoutes = require('./chatRoutes');
 
 // ===========================================
 // RUTAS PÚBLICAS
@@ -57,6 +58,9 @@ router.use('/dashboard', dashboardRoutes);
 
 // Configuración del sitio
 router.use('/settings', settingsRoutes);
+
+// Chat en vivo
+router.use('/chat', chatRoutes);
 
 // ===========================================
 // INFO DE LA API
