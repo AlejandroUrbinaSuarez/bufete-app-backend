@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
@@ -70,6 +71,21 @@ app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 
 // ===========================================
+// COMPRESIÓN GZIP
+// ===========================================
+
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  },
+  level: 6, // Balance entre velocidad y compresión
+  threshold: 1024 // Solo comprimir respuestas > 1KB
+}));
+
+// ===========================================
 // MIDDLEWARES DE PARSING
 // ===========================================
 
@@ -87,10 +103,15 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // ===========================================
-// ARCHIVOS ESTÁTICOS
+// ARCHIVOS ESTÁTICOS CON CACHÉ
 // ===========================================
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Uploads con caché de 1 día
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
+  etag: true,
+  lastModified: true
+}));
 
 // ===========================================
 // RUTAS

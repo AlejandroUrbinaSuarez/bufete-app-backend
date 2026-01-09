@@ -1,5 +1,6 @@
 const { Service, AuditLog } = require('../models');
 const slugify = require('slugify');
+const { cacheService, CACHE_TTL, CACHE_KEYS } = require('../services/cacheService');
 
 class ServiceController {
   /**
@@ -9,16 +10,18 @@ class ServiceController {
   async getAll(req, res, next) {
     try {
       const { featured } = req.query;
-      const where = { is_active: true };
+      const cacheKey = featured === 'true' ? `${CACHE_KEYS.SERVICES_ACTIVE}:featured` : CACHE_KEYS.SERVICES_ACTIVE;
 
-      if (featured === 'true') {
-        where.is_featured = true;
-      }
-
-      const services = await Service.findAll({
-        where,
-        order: [['display_order', 'ASC'], ['name', 'ASC']]
-      });
+      const services = await cacheService.getOrSet(cacheKey, async () => {
+        const where = { is_active: true };
+        if (featured === 'true') {
+          where.is_featured = true;
+        }
+        return await Service.findAll({
+          where,
+          order: [['display_order', 'ASC'], ['name', 'ASC']]
+        });
+      }, CACHE_TTL.MEDIUM);
 
       res.json(services);
     } catch (error) {
@@ -131,6 +134,9 @@ class ServiceController {
         userAgent: req.get('User-Agent')
       });
 
+      // Invalidar caché de servicios
+      cacheService.deletePattern('services:');
+
       res.status(201).json({
         message: 'Servicio creado exitosamente',
         service
@@ -205,6 +211,9 @@ class ServiceController {
         userAgent: req.get('User-Agent')
       });
 
+      // Invalidar caché de servicios
+      cacheService.deletePattern('services:');
+
       res.json({
         message: 'Servicio actualizado exitosamente',
         service
@@ -240,6 +249,9 @@ class ServiceController {
         ipAddress: req.ip,
         userAgent: req.get('User-Agent')
       });
+
+      // Invalidar caché de servicios
+      cacheService.deletePattern('services:');
 
       res.json({ message: 'Servicio eliminado exitosamente' });
     } catch (error) {
