@@ -167,7 +167,12 @@ class StatsController {
         }
       });
     } catch (error) {
-      next(error);
+      console.error('getDashboardStats error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        details: process.env.NODE_ENV !== 'production' ? error.stack : undefined
+      });
     }
   }
 
@@ -238,7 +243,12 @@ class StatsController {
         }
       });
     } catch (error) {
-      next(error);
+      console.error('getCaseStats error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        details: process.env.NODE_ENV !== 'production' ? error.stack : undefined
+      });
     }
   }
 
@@ -311,7 +321,12 @@ class StatsController {
         }
       });
     } catch (error) {
-      next(error);
+      console.error('getAppointmentStats error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        details: process.env.NODE_ENV !== 'production' ? error.stack : undefined
+      });
     }
   }
 
@@ -330,13 +345,18 @@ class StatsController {
           limit: 5
         }),
         // Citas de hoy
-        Appointment.findAll({
-          where: {
-            date: {
-              [Op.gte]: new Date().setHours(0, 0, 0, 0),
-              [Op.lt]: new Date().setHours(23, 59, 59, 999)
-            }
-          },
+        (() => {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const tomorrow = new Date(today);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          return Appointment.findAll({
+            where: {
+              date: {
+                [Op.gte]: today,
+                [Op.lt]: tomorrow
+              }
+            },
           include: [
             { model: User, as: 'client', attributes: ['id', 'first_name', 'last_name', 'email'] },
             { model: Lawyer, as: 'lawyer', attributes: ['id', 'full_name'] },
@@ -344,7 +364,8 @@ class StatsController {
           ],
           order: [['time', 'ASC']],
           limit: 10
-        }),
+          });
+        })(),
         // Mensajes de contacto recientes
         ContactMessage.findAll({
           include: [
@@ -404,7 +425,12 @@ class StatsController {
         }
       });
     } catch (error) {
-      next(error);
+      console.error('getRecentActivity error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        details: process.env.NODE_ENV !== 'production' ? error.stack : undefined
+      });
     }
   }
 
@@ -447,7 +473,12 @@ class StatsController {
         }
       });
     } catch (error) {
-      next(error);
+      console.error('getContentStats error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        details: process.env.NODE_ENV !== 'production' ? error.stack : undefined
+      });
     }
   }
 }
