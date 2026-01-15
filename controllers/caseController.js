@@ -46,7 +46,7 @@ class CaseController {
       const cases = await Case.findAll({
         where: { client_id: req.user.id },
         include: [
-          { model: Lawyer, as: 'lawyer', attributes: ['id', 'full_name', 'photo_url', 'specialization'] },
+          { model: Lawyer, as: 'lawyer', attributes: ['id', 'full_name', 'photo_url', 'specialty'] },
           { model: Service, as: 'service', attributes: ['id', 'name', 'icon'] }
         ],
         order: [['created_at', 'DESC']]
@@ -70,7 +70,7 @@ class CaseController {
           client_id: req.user.id
         },
         include: [
-          { model: Lawyer, as: 'lawyer', attributes: ['id', 'full_name', 'photo_url', 'specialization', 'email', 'phone'] },
+          { model: Lawyer, as: 'lawyer', attributes: ['id', 'full_name', 'photo_url', 'specialty', 'email', 'phone'] },
           { model: Service, as: 'service', attributes: ['id', 'name', 'icon'] },
           {
             model: CaseUpdate,
