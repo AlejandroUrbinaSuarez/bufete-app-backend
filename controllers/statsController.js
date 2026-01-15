@@ -380,7 +380,7 @@ class StatsController {
           include: [
             { model: User, as: 'agent', attributes: ['id', 'first_name', 'last_name'] }
           ],
-          order: [['updated_at', 'DESC']],
+          order: [['created_at', 'DESC']],
           limit: 5
         })
       ]);
@@ -420,7 +420,7 @@ class StatsController {
             visitorEmail: c.visitor_email,
             status: c.status,
             agent: c.agent ? `${c.agent.first_name} ${c.agent.last_name}` : null,
-            updatedAt: c.updated_at
+            createdAt: c.created_at
           }))
         }
       });
