@@ -322,7 +322,7 @@ class StatsController {
         // Casos recientes
         Case.findAll({
           include: [
-            { model: User, as: 'client', attributes: ['id', 'full_name', 'email'] },
+            { model: User, as: 'client', attributes: ['id', 'first_name', 'last_name', 'email'] },
             { model: Lawyer, as: 'lawyer', attributes: ['id', 'full_name'] },
             { model: Service, as: 'service', attributes: ['id', 'name'] }
           ],
@@ -338,7 +338,7 @@ class StatsController {
             }
           },
           include: [
-            { model: User, as: 'client', attributes: ['id', 'full_name', 'email'] },
+            { model: User, as: 'client', attributes: ['id', 'first_name', 'last_name', 'email'] },
             { model: Lawyer, as: 'lawyer', attributes: ['id', 'full_name'] },
             { model: Service, as: 'service', attributes: ['id', 'name'] }
           ],
@@ -357,7 +357,7 @@ class StatsController {
         ChatSession.findAll({
           where: { status: { [Op.in]: ['waiting', 'active'] } },
           include: [
-            { model: User, as: 'agent', attributes: ['id', 'full_name'] }
+            { model: User, as: 'agent', attributes: ['id', 'first_name', 'last_name'] }
           ],
           order: [['updated_at', 'DESC']],
           limit: 5
@@ -371,7 +371,7 @@ class StatsController {
             id: c.id,
             title: c.title,
             status: c.status,
-            client: c.client?.full_name,
+            client: c.client ? `${c.client.first_name} ${c.client.last_name}` : null,
             lawyer: c.lawyer?.full_name,
             service: c.service?.name,
             createdAt: c.created_at
@@ -380,7 +380,7 @@ class StatsController {
             id: a.id,
             time: a.time,
             status: a.status,
-            client: a.client?.full_name || a.client_name,
+            client: a.client ? `${a.client.first_name} ${a.client.last_name}` : a.client_name,
             lawyer: a.lawyer?.full_name,
             service: a.service?.name
           })),
@@ -398,7 +398,7 @@ class StatsController {
             visitorName: c.visitor_name,
             visitorEmail: c.visitor_email,
             status: c.status,
-            agent: c.agent?.full_name,
+            agent: c.agent ? `${c.agent.first_name} ${c.agent.last_name}` : null,
             updatedAt: c.updated_at
           }))
         }

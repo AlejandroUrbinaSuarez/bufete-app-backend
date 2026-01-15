@@ -13,7 +13,7 @@ class AppointmentController {
     try {
       const lawyers = await Lawyer.findAll({
         where: { is_active: true },
-        attributes: ['id', 'full_name', 'specialization', 'photo_url'],
+        attributes: ['id', 'full_name', 'specialty', 'photo_url'],
         include: [{
           model: AppointmentSlot,
           as: 'availabilitySlots',
@@ -275,7 +275,7 @@ class AppointmentController {
       const appointments = await Appointment.findAll({
         where: { client_id: req.user.id },
         include: [
-          { model: Lawyer, as: 'lawyer', attributes: ['id', 'full_name', 'photo_url', 'specialization'] },
+          { model: Lawyer, as: 'lawyer', attributes: ['id', 'full_name', 'photo_url', 'specialty'] },
           { model: Service, as: 'service', attributes: ['id', 'name'] }
         ],
         order: [['appointment_date', 'DESC'], ['start_time', 'DESC']]
