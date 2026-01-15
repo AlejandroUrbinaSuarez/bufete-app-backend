@@ -51,7 +51,7 @@ class StatsController {
         // Citas de hoy
         Appointment.count({
           where: {
-            date: {
+            appointment_date: {
               [Op.gte]: today,
               [Op.lt]: new Date(today.getTime() + 24 * 60 * 60 * 1000)
             },
@@ -352,7 +352,7 @@ class StatsController {
           tomorrow.setDate(tomorrow.getDate() + 1);
           return Appointment.findAll({
             where: {
-              date: {
+              appointment_date: {
                 [Op.gte]: today,
                 [Op.lt]: tomorrow
               }
@@ -362,7 +362,7 @@ class StatsController {
             { model: Lawyer, as: 'lawyer', attributes: ['id', 'full_name'] },
             { model: Service, as: 'service', attributes: ['id', 'name'] }
           ],
-          order: [['time', 'ASC']],
+          order: [['start_time', 'ASC']],
           limit: 10
           });
         })(),
@@ -399,7 +399,7 @@ class StatsController {
           })),
           todayAppointments: todayAppointments.map(a => ({
             id: a.id,
-            time: a.time,
+            time: a.start_time,
             status: a.status,
             client: a.client ? `${a.client.first_name} ${a.client.last_name}` : a.client_name,
             lawyer: a.lawyer?.full_name,
