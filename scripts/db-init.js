@@ -53,7 +53,6 @@ async function initDatabase() {
   // Importar después de cargar dotenv
   const sequelize = require('../config/database');
   const models = require('../models');
-  const bcrypt = require('bcryptjs');
 
   try {
     // =========================================
@@ -148,12 +147,12 @@ async function initDatabase() {
     } else {
       // Crear admin por defecto
       const defaultPassword = 'Admin123!';
-      const hashedPassword = await bcrypt.hash(defaultPassword, 12);
 
       const admin = await User.create({
         email: 'admin@bufete.com',
-        password: hashedPassword,
-        full_name: 'Administrador',
+        password_hash: defaultPassword, // El hook beforeCreate lo hashea automáticamente
+        first_name: 'Admin',
+        last_name: 'Sistema',
         role_id: adminRole.id,
         is_active: true,
         email_verified: true
