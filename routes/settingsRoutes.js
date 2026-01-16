@@ -1,8 +1,7 @@
 const router = require('express').Router();
+const settingsController = require('../controllers/settingsController');
 
-// Placeholder - se implementará completo después
-router.get('/', (req, res) => {
-  res.json({ message: 'Ruta por implementar' });
-});
+// Ruta pública - obtener configuración de contacto
+router.get('/public', settingsController.getPublicSettings);
 
 module.exports = router;

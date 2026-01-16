@@ -165,6 +165,62 @@ async function initDatabase() {
     }
 
     // =========================================
+    // PASO 6: Crear configuraciones del sitio
+    // =========================================
+    log.step(6, 'Verificando configuraciones del sitio...');
+
+    const { SiteSetting } = models;
+    const siteSettings = [
+      {
+        key: 'site_phone',
+        value: process.env.SITE_PHONE || '+1 234 567 890',
+        type: 'string',
+        description: 'Teléfono de contacto principal'
+      },
+      {
+        key: 'site_email',
+        value: process.env.SITE_EMAIL || 'contacto@ejemplo.com',
+        type: 'string',
+        description: 'Email de contacto principal'
+      },
+      {
+        key: 'site_address',
+        value: process.env.SITE_ADDRESS || 'Calle Principal 123, Ciudad',
+        type: 'string',
+        description: 'Dirección física del bufete'
+      },
+      {
+        key: 'site_schedule',
+        value: 'Lunes a Viernes: 9:00 - 18:00',
+        type: 'string',
+        description: 'Horario de atención entre semana'
+      },
+      {
+        key: 'site_schedule_weekend',
+        value: 'Sábado: 9:00 - 13:00',
+        type: 'string',
+        description: 'Horario de atención fin de semana'
+      }
+    ];
+
+    for (const setting of siteSettings) {
+      const [, created] = await SiteSetting.findOrCreate({
+        where: { setting_key: setting.key },
+        defaults: {
+          setting_value: setting.value,
+          setting_type: setting.type,
+          description: setting.description
+        }
+      });
+
+      if (created) {
+        log.success(`Configuración creada: ${setting.key}`);
+      } else {
+        log.info(`Configuración existente: ${setting.key}`);
+      }
+    }
+
+    // =========================================
     // RESUMEN FINAL
     // =========================================
     console.log('\n' + '='.repeat(50));
@@ -175,6 +231,7 @@ async function initDatabase() {
    - Base de datos: ${process.env.DB_NAME}
    - Tablas: ${tables.length}
    - Roles: ${roles.length}
+   - Configuraciones: ${siteSettings.length}
 
 🚀 Próximos pasos:
    1. Ejecutar: npm run dev
