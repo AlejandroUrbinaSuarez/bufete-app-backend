@@ -7,7 +7,13 @@ const rateLimit = require('express-rate-limit');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
-require('dotenv').config();
+const fs = require('fs');
+
+// Load .env from local file or Hostinger's .builds/config/.env
+const envFile = ['.env', '.builds/config/.env']
+  .map(f => path.join(__dirname, f))
+  .find(f => fs.existsSync(f));
+require('dotenv').config(envFile ? { path: envFile } : {});
 
 // Importar configuraciones
 const corsOptions = require('./config/cors');
