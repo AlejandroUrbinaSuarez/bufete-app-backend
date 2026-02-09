@@ -8,7 +8,7 @@ class SettingsController {
    */
   async getPublicSettings(req, res, next) {
     try {
-      const cacheKey = `${CACHE_KEYS.SETTINGS || 'settings'}:public`;
+      const cacheKey = `${CACHE_KEYS.SITE_SETTINGS}:public`;
 
       const settings = await cacheService.getOrSet(cacheKey, async () => {
         const publicKeys = [
